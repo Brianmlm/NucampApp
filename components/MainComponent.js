@@ -123,6 +123,7 @@ const ContactNavigator = createStackNavigator(
   }
 )
 
+//Adding Nucamp logo to side drawer
 const CustomDrawerContentComponent = (props) => (
   <ScrollView>
     <SafeAreaView
@@ -147,8 +148,8 @@ const CustomDrawerContentComponent = (props) => (
   </ScrollView>
 )
 
+//the main drawer navigator
 const MainNavigator = createDrawerNavigator(
-  //the main drawer navigator
   {
     Home: {
       screen: HomeNavigator,
@@ -219,6 +220,7 @@ class Main extends Component {
   }
 }
 
+//Stylesheets
 const styles = StyleSheet.create({
   container: {
     flex: 1,
