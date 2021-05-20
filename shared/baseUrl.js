@@ -1,1 +1,1 @@
-export const baseUrl = 'http://10.36.18.11:3001/'
+export const baseUrl = 'https://aaronmichael.herokuapp.com/nucamp-data/'

@@ -1,7 +1,15 @@
 import React, { Component } from 'react'
 import { ScrollView, FlatList } from 'react-native'
 import { Card, Text, ListItem } from 'react-native-elements'
-import { PARTNERS } from '../shared/partners'
+import { connect } from 'react-redux'
+import { baseUrl } from '../shared/baseUrl'
+import Loading from './LoadingComponent' //Doesn't need closing brackets because its the default export
+
+const mapStateToProps = (state) => {
+  return {
+    partners: state.partners,
+  } //Receives state as a prop, then returns partners data from the state
+}
 
 function Mission() {
   return (
@@ -20,12 +28,6 @@ function Mission() {
 }
 
 class About extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      partners: PARTNERS,
-    }
-  }
   static navigationOptions = {
     title: 'About Us',
   }
@@ -36,16 +38,38 @@ class About extends Component {
         <ListItem
           title={item.name}
           subtitle={item.description}
-          leftAvatar={{ source: require('./images/bootstrap-logo.png') }}
+          leftAvatar={{ source: { uri: baseUrl + item.image } }}
         />
       )
     }
+
+    if (this.props.partners.isLoading) {
+      return (
+        <ScrollView>
+          <Mission />
+          <Card title='Community Partners'>
+            <Loading />
+          </Card>
+        </ScrollView>
+      )
+    }
+    if (this.props.partners.errMess) {
+      return (
+        <ScrollView>
+          <Mission />
+          <Card title='Community Partners'>
+            <Text>{this.props.partners.errMess}</Text>
+          </Card>
+        </ScrollView>
+      )
+    }
+
     return (
       <ScrollView>
         <Mission />
         <Card title='Community Partners'>
           <FlatList
-            data={this.state.partners}
+            data={this.props.partners.partners} // First partner refers to the entire part of the state that handles the partners data including the isLoading and Error message properties. -- The second partners actually refers to the partners data array
             keyExtractor={(item) => item.id.toString()}
             renderItem={RenderPartner}
           />
@@ -55,4 +79,4 @@ class About extends Component {
   }
 }
 
-export default About
+export default connect(mapStateToProps)(About) //connect function ensures that the about component receives the partners props from the redux store
