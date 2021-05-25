@@ -1,6 +1,7 @@
 import * as ActionTypes from './ActionTypes'
 import { baseUrl } from '../shared/baseUrl'
 
+//Thunked
 export const fetchComments = () => (dispatch) => {
   return fetch(baseUrl + 'comments')
     .then(
@@ -25,16 +26,40 @@ export const fetchComments = () => (dispatch) => {
     .catch((error) => dispatch(commentsFailed(error.message)))
 }
 
+//Non-Thunked
 export const commentsFailed = (errMess) => ({
   type: ActionTypes.COMMENTS_FAILED,
   payload: errMess,
 })
 
+//Non-Thunked
 export const addComments = (comments) => ({
   type: ActionTypes.ADD_COMMENTS,
   payload: comments,
 })
 
+//Thunked
+export const postComment = (campsiteId, rating, author, text) => (dispatch) => {
+  const newComment = {
+    campsiteId,
+    rating,
+    author,
+    text,
+  }
+  newComment.date = new Date().toString()
+
+  setTimeout(() => {
+    dispatch(addComment(newComment))
+  }, 2000)
+}
+
+//Non-Thunked
+export const addComment = (comment) => ({
+  type: ActionTypes.ADD_COMMENT,
+  payload: comment,
+})
+
+//Thunked
 export const fetchCampsites = () => (dispatch) => {
   dispatch(campsitesLoading())
 
