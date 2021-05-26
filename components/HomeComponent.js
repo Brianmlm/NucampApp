@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, ScrollView } from 'react-native'
+import { Animated, View, Text, ScrollView } from 'react-native'
 import { Card } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { baseUrl } from '../shared/baseUrl'
@@ -37,13 +37,33 @@ function RenderItem(props) {
   return <View />
 }
 class Home extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      scaleValue: new Animated.Value(0), //property can be named anything
+    }
+  }
+
+  animate() {
+    Animated.timing(this.state.scaleValue, {
+      toValue: 1, //1 represents 100% of the time
+      duration: 1500,
+      useNativeDriver: true, //helps improve driver animation
+    }).start()
+  }
+  componentDidMount() {
+    this.animate()
+  } // When home component mounts, this ensures that animation will start
+
   static navigationOptions = {
     title: 'Home',
   }
 
   render() {
     return (
-      <ScrollView>
+      <Animated.ScrollView
+        style={{ transform: [{ scale: this.state.scaleValue }] }}
+      >
         <RenderItem
           item={
             this.props.campsites.campsites.filter(
@@ -71,7 +91,7 @@ class Home extends Component {
           isLoading={this.props.partners.isLoading}
           errMess={this.props.partners.errMess}
         />
-      </ScrollView>
+      </Animated.ScrollView>
     )
   }
 }
