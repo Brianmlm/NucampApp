@@ -7,6 +7,7 @@ import { baseUrl } from '../shared/baseUrl'
 import { SwipeRow } from 'react-native-swipe-list-view'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { deleteFavorite } from '../redux/ActionCreators'
+import * as Animatable from 'react-native-animatable'
 
 const mapStateToProps = (state) => {
   return {
@@ -78,14 +79,17 @@ class Favorites extends Component {
         </View>
       )
     } //If there is no error message and the is loading prop is false we will return the Flatlist component
+
     return (
-      <FlatList
-        data={this.props.campsites.campsites.filter((campsite) =>
-          this.props.favorites.includes(campsite.id)
-        )}
-        renderItem={renderFavoriteItem}
-        keyExtractor={(item) => item.id.toString()}
-      />
+      <Animatable.View animation='fadeInRightBig' duration={2000}>
+        <FlatList
+          data={this.props.campsites.campsites.filter((campsite) =>
+            this.props.favorites.includes(campsite.id)
+          )}
+          renderItem={renderFavoriteItem}
+          keyExtractor={(item) => item.id.toString()}
+        />
+      </Animatable.View>
     )
   }
 }
