@@ -64,12 +64,22 @@ function RenderComments({ comments }) {
 function RenderCampsite(props) {
   const { campsite } = props
 
+  const view = React.createRef() //Reference for gesture, kind of like an Id attribute in HTML
+
   const recognizeDrag = ({ dx }) => (dx < -200 ? true : false) // dx-differential/ different of a gesture across the x-axis
 
   const panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => true, //Activates pan responder to responde to gestures to components that it's used for
+    onStartShouldSetPanResponder: () => true, //Activates pan responder to respond to gestures to components that it's used for
+    onPanResponderGrant: () => {
+      view.current
+        .rubberBand(1000)
+        .then((endState) =>
+          console.log(endState.finished ? 'finished' : 'canceled')
+        )
+    }, //Triggered when a gesture is first recognized
     onPanResponderEnd: (e, gestureState) => {
       //e-event
+
       console.log('pan responder end', gestureState)
       if (recognizeDrag(gestureState)) {
         Alert.alert(
@@ -102,6 +112,7 @@ function RenderCampsite(props) {
         animation='fadeInDown'
         duration={2000}
         delay={1000}
+        ref={view}
         {...panResponder.panHandlers}
       >
         <Card
