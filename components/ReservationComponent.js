@@ -12,6 +12,7 @@ import {
 } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import * as Animatable from 'react-native-animatable'
+import * as Notifications from 'expo-notifications'
 
 class Reservation extends Component {
   constructor(props) {
@@ -61,7 +62,12 @@ class Reservation extends Component {
       },
       {
         text: 'OK',
-        onPress: () => this.resetForm(),
+        onPress: () => {
+          this.presentLocalNotification(
+            this.state.date.toLocaleDateString('en-US')
+          )
+          this.resetForm()
+        }, //this is where we pass in the async date function
       },
     ])
   }
@@ -74,6 +80,32 @@ class Reservation extends Component {
       showCalendar: false,
       // showModal: false,
     })
+  }
+
+  async presentLocalNotification(date) {
+    function sendNotification() {
+      Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+          shouldShowAlert: true,
+        }),
+      }) //this is how we override alerts and let notification pop up when app is open
+
+      Notifications.scheduleNotificationAsync({
+        content: {
+          title: 'Your Campsite Reservation Search',
+          body: `Search for ${date} requested`,
+        },
+        trigger: null, //trigger to null causes notification to show immediately, can be set for different times
+      })
+    }
+    // Getting permission to show notification
+    let permissions = await Notifications.getPermissionsAsync()
+    if (!permissions.granted) {
+      permissions = await Notifications.requestPermissionsAsync()
+    }
+    if (permissions.granted) {
+      sendNotification()
+    } //AWAIT keyword can only be used inside of the ASYNC function, followed by a PROMISE. It stops the function execution until promise is fulfilled, then returns a value
   }
 
   render() {

@@ -69,6 +69,7 @@ class Login extends Component {
         />
         <CheckBox
           title='Remember Me'
+          // center
           checked={this.state.remember}
           onPress={() => this.setState({ remember: !this.state.remember })}
           containerStyle={styles.formCheckbox}
