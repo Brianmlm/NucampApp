@@ -68,6 +68,9 @@ function RenderCampsite(props) {
 
   const recognizeDrag = ({ dx }) => (dx < -200 ? true : false) // dx-differential/ different of a gesture across the x-axis
 
+  //Week 3- Task 3
+  const recognizeComment = ({ dx }) => dx > 200 // function return true when right swipe and more than 200px
+
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true, //Activates pan responder to respond to gestures to components that it's used for
     onPanResponderGrant: () => {
@@ -101,7 +104,9 @@ function RenderCampsite(props) {
           ],
           { cancelable: false }
         )
-      }
+      } else if (recognizeComment(gestureState)) {
+        props.onShowModal()
+      } //we are returning props.onShowModal() because that what the onclick on the pencil icon accepts
       return true
     },
   })
