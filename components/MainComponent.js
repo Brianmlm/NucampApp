@@ -14,6 +14,8 @@ import {
   Text,
   ScrollView,
   Image,
+  Alert,
+  ToastAndroid,
 } from 'react-native'
 import { createStackNavigator } from 'react-navigation-stack'
 import { createDrawerNavigator, DrawerItems } from 'react-navigation-drawer'
@@ -27,6 +29,7 @@ import {
   fetchPromotions,
   fetchPartners,
 } from '../redux/ActionCreators'
+import NetInfo from '@react-native-community/netinfo'
 
 const mapDispatchToProps = {
   fetchCampsites,
@@ -334,6 +337,46 @@ class Main extends Component {
     this.props.fetchComments()
     this.props.fetchPromotions()
     this.props.fetchPartners()
+
+    NetInfo.fetch().then((connectionInfo) => {
+      Platform.OS === 'ios'
+        ? Alert.alert(
+            'Initial Network Connectivity Type: ',
+            connectionInfo.type
+          )
+        : ToastAndroid.show(
+            'Initial Network Connectivity Type: ' + connectionInfo.Style,
+            ToastAndroid.LONG
+          )
+    }) //ToastAndroid.Short= 2 secs, TostAndroid.Long=3.5 secs: Only works w/ Android and thats why we are using Alert for IOS
+    this.unsubscribeNetInfo = NetInfo.addEventListener((connectionInfo) => {
+      this.handleConnectivityChange(connectionInfo)
+    })
+  }
+
+  componentWillUnmount() {
+    this.unsubscribeNetInfo()
+  } // Stops listening to changes when component un-mounts
+
+  handleConnectivityChange = (connectionInfo) => {
+    let connectionMsg = 'You are now connected to an active network.'
+    switch (connectionInfo.type) {
+      case 'none':
+        connectionMsg = 'No network connection is active.'
+        break
+      case 'unknown':
+        connectionMsg = 'The network connection state is now unknown.'
+        break
+      case 'cellular':
+        connectionMsg = 'You are now connected to a cellular network.'
+        break
+      case 'wifi':
+        connectionMsg = 'You are now connected to a WiFi network.'
+        break
+    }
+    Platform.OS === 'ios'
+      ? Alert.alert('Connection change:', connectionMsg)
+      : ToastAndroid.show(connectionMsg, ToastAndroid.LONG)
   }
 
   render() {
